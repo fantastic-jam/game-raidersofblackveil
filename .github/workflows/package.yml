@@ -1,0 +1,32 @@
+name: Package
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        run: echo "version=$(node -e "process.stdout.write(require('./info.json').version)")" >> $GITHUB_OUTPUT
+
+      - name: Create zip
+        run: zip game-raidersofblackveil-${{ steps.version.outputs.version }}.zip index.js info.json game.png
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-raidersofblackveil-${{ steps.version.outputs.version }}
+          path: game-raidersofblackveil-${{ steps.version.outputs.version }}.zip
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: game-raidersofblackveil-${{ steps.version.outputs.version }}.zip
