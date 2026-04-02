@@ -6,6 +6,6 @@ OUT="dist/game-raidersofblackveil-${VERSION}.zip"
 
 rm -rf dist
 mkdir -p dist
-zip "$OUT" index.js info.json game.png
+zip "$OUT" index.js info.json gameart.png
 
 echo "Packaged: $OUT"
