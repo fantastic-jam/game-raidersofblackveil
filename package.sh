@@ -2,9 +2,10 @@
 set -e
 
 VERSION=$(node -e "process.stdout.write(require('./info.json').version)")
-OUT="../game-raidersofblackveil-${VERSION}.zip"
+OUT="dist/game-raidersofblackveil-${VERSION}.zip"
 
-rm -f "$OUT"
+rm -rf dist
+mkdir -p dist
 zip "$OUT" index.js info.json game.png
 
 echo "Packaged: $OUT"
