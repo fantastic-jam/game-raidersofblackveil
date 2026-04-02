@@ -1,32 +1,24 @@
 # Raiders of Blackveil — Vortex Extension
 
-Adds support for **Raiders of Blackveil** (Steam App ID: `3352240`) to the [Vortex mod manager](https://www.nexusmods.com/about/vortex/). Handles game detection and deploys BepInEx mods to the correct folder.
+Adds support for **Raiders of Blackveil** (Steam App ID: `3352240`) to the [Vortex mod manager](https://www.nexusmods.com/about/vortex/). Handles game detection, auto-installs BepInEx, and deploys mods to the correct folder.
 
 ## Requirements
 
 - [Raiders of Blackveil](https://store.steampowered.com/app/3352240) installed via Steam
 - [Vortex](https://www.nexusmods.com/about/vortex/) mod manager
-- [BepInEx 6 bleeding edge (Unity Mono x64)](https://builds.bepinex.dev/projects/bepinex_be) — install this manually before deploying mods
 
 ## Getting Started
 
 1. Install this extension via Vortex's **Extensions** tab (search "Raiders of Blackveil") or download from Nexus Mods and drag the zip into Vortex.
-2. Install **BepInEx 6 bleeding edge (Unity Mono x64)** into your game folder manually — see the [BepInEx installation guide](https://docs.bepinex.dev/articles/user_guide/installation/index.html).
-3. In Vortex, switch to the **Games** tab and manage Raiders of Blackveil. Vortex will auto-detect it via Steam.
-4. Install mods from Nexus Mods as normal. Vortex deploys them to `BepInEx/plugins/`.
+2. In Vortex, switch to the **Games** tab and manage Raiders of Blackveil. Vortex will auto-detect it via Steam.
+3. Install mods from Nexus Mods as normal. Vortex will auto-install BepInEx if needed and deploy mods to `BepInEx/plugins/`.
 
 ## What This Extension Does
 
 - Auto-detects the game via Steam
+- Auto-installs BepInEx 5 (Unity Mono x64) from GitHub if not already present
 - Deploys mods to `<game root>/BepInEx/plugins/`
 - Uses Vortex's built-in `modtype-bepinex` mod type — no custom installer needed
-
-## BepInEx Note
-
-Raiders of Blackveil is a **Unity Mono** build. It requires **BepInEx 6 bleeding edge** (not the stable BepInEx 5 release). Because BepInEx 6 is pre-release and not hosted on Nexus Mods, this extension does **not** auto-install it. Install it manually once, then use Vortex for all your mods.
-
-BepInEx download: https://builds.bepinex.dev/projects/bepinex_be
-Pick: `BepInEx_UnityMono_x64_<version>.zip`
 
 ## Troubleshooting
 
