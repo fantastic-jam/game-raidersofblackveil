@@ -17,7 +17,7 @@ jobs:
         run: echo "version=$(node -e "process.stdout.write(require('./info.json').version)")" >> $GITHUB_OUTPUT
 
       - name: Create zip
-        run: zip game-raidersofblackveil-${{ steps.version.outputs.version }}.zip index.js info.json gameart.png
+        run: zip game-raidersofblackveil-${{ steps.version.outputs.version }}.zip index.js installer.js info.json gameart.png
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

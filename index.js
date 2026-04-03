@@ -1,4 +1,6 @@
+const path = require("path");
 const { util } = require("vortex-api");
+const { bepInExModInstaller } = require("./installer");
 
 const GAME_ID = "raidersofblackveil";
 const STEAM_ID = "3352240";
@@ -7,7 +9,7 @@ const EXEC = "RoB.exe";
 
 function findGame() {
   return util.GameStoreHelper.findByAppId([STEAM_ID]).then(
-    (game) => game.gamePath
+    (game) => game.gamePath,
   );
 }
 
@@ -31,15 +33,24 @@ function main(context) {
     },
   });
 
+  context.registerInstaller(
+    GAME_ID,
+    9,
+    bepInExModInstaller.testSupported,
+    bepInExModInstaller.install,
+  );
+
   context.once(() => {
-    context.api.ext.bepinexAddGame({
-      gameId: GAME_ID,
-      autoDownloadBepInEx: true,
-      forceGithubDownload: true,
-      bepinexVersion: "5.4.23.5",
-      unityBuild: "unitymono",
-      architecture: "x64",
-    });
+    if (context.api.ext.bepinexAddGame !== undefined) {
+      context.api.ext.bepinexAddGame({
+        gameId: GAME_ID,
+        autoDownloadBepInEx: true,
+        forceGithubDownload: true,
+        bepinexVersion: "5.4.23.5",
+        unityBuild: "unitymono",
+        architecture: "x64",
+      });
+    }
   });
 
   return true;
