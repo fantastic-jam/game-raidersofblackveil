@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.0]
+
+### Fixed
+- BepInEx auto-install no longer re-triggers on every mod install — the installer now recognises BepInEx distribution packages (identified by `winhttp.dll` / `doorstop_config.ini`) and skips them, letting `modtype-bepinex` handle them directly
+
 ## [0.3.0]
 
 ### Changed

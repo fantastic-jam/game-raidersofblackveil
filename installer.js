@@ -2,13 +2,33 @@ const path = require("path");
 
 const GAME_ID = "raidersofblackveil";
 
+// Files that uniquely identify a BepInEx distribution package.
+// If these are present we must not intercept — let modtype-bepinex handle it.
+const BEPINEX_DISTRIBUTION_MARKERS = ["winhttp.dll", "doorstop_config.ini"];
+
 function testSupported(files, gameId) {
-  return Promise.resolve({
-    supported:
-      gameId === GAME_ID &&
-      files.some((f) => path.extname(f).toLowerCase() === ".dll"),
-    requiredFiles: [],
-  });
+  if (gameId !== GAME_ID) {
+    return Promise.resolve({ supported: false, requiredFiles: [] });
+  }
+
+  const norm = files.map((f) => path.basename(f).toLowerCase());
+  const isBepInExDistro = BEPINEX_DISTRIBUTION_MARKERS.some((marker) =>
+    norm.includes(marker)
+  );
+
+  if (isBepInExDistro) {
+    return Promise.resolve({ supported: false, requiredFiles: [] });
+  }
+
+  const normPaths = files.map((f) => f.replace(/\\/g, "/").toLowerCase());
+  const needsMapping = normPaths.some(
+    (f) =>
+      f.startsWith("bepinex/") ||
+      f.startsWith("plugins/") ||
+      f.startsWith("patchers/")
+  );
+
+  return Promise.resolve({ supported: needsMapping, requiredFiles: [] });
 }
 
 function install(files) {
