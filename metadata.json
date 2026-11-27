@@ -1,0 +1,7 @@
+{
+  "nexus_game_domain": "site",
+  "nexus_mod_id": 1764,
+  "nexus_file_id": "7251131",
+  "nexus_mod_uid": "9856949946084",
+  "nexus_short_description": "Adds Vortex support for Raiders of Blackveil: detects the game, installs and updates BepInEx IL2CPP for the current game version automatically, and deploys mods to the right folder."
+}

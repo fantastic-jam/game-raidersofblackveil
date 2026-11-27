@@ -1,0 +1,132 @@
+name: Publish to Nexus Mods
+
+# Uploads the extension zip of a release to its Nexus page (metadata.json), as a new version of the
+# main file, with the release's CHANGELOG.md section as changelog.
+# Runs after the Package workflow built a tag (v*). The release is created with GITHUB_TOKEN, which
+# doesn't trigger `release: published`, hence workflow_run. Run it manually to (re)publish a tag.
+on:
+  workflow_run:
+    workflows: [Package]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish (e.g. v0.5.0)'
+        required: true
+
+env:
+  NEXUS_API: https://api.nexusmods.com/v3
+
+jobs:
+  nexus-publish:
+    runs-on: ubuntu-latest
+    # workflow_run: only successful Package runs for a v* tag (head_branch is the tag name).
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       startsWith(github.event.workflow_run.head_branch, 'v'))
+    steps:
+      - name: Resolve tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          RUN_TAG: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          TAG="${INPUT_TAG:-$RUN_TAG}"
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::'$TAG' is not a release tag (vX.Y.Z)"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      # Default branch, not the tag: metadata.json and the changelog section are read from the latest
+      # main (a tag cut before metadata.json existed can still be published); the zip comes from the release.
+      - uses: actions/checkout@v4
+
+      - name: Read metadata
+        id: meta
+        run: |
+          echo "file_id=$(jq -r '.nexus_file_id' metadata.json)" >> "$GITHUB_OUTPUT"
+          echo "mod_uid=$(jq -r '.nexus_mod_uid' metadata.json)" >> "$GITHUB_OUTPUT"
+
+      # Fail fast with a clear message when the key is expired or revoked.
+      - name: Check Nexus API key
+        env:
+          NEXUS_API_KEY: ${{ secrets.NEXUS_API_KEY }}
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "apikey: $NEXUS_API_KEY" \
+            "$NEXUS_API/mods/${{ steps.meta.outputs.mod_uid }}/files")
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Nexus API key check failed (HTTP $STATUS). Regenerate the key and run: gh secret set NEXUS_API_KEY"
+            exit 1
+          fi
+
+      # One line per changelog item: "- " starts an item, indented lines continue it, "###" headings are dropped.
+      - name: Extract changelog section
+        id: changelog
+        run: |
+          VERSION="${{ steps.tag.outputs.version }}"
+          awk -v v="$VERSION" '
+            function flush() { if (item != "") print item; item = "" }
+            index($0, "## [" v "]") == 1 { f = 1; next }
+            index($0, "## [") == 1 { flush(); f = 0 }
+            !f { next }
+            /^- / { flush(); item = substr($0, 3); next }
+            /^[ \t]+[^ \t]/ && item != "" { sub(/^[ \t]+/, ""); item = item " " $0; next }
+            { flush() }
+            END { flush() }
+          ' CHANGELOG.md > changelog.txt
+          cat changelog.txt
+          {
+            echo "text<<CHANGELOG_EOF"
+            cat changelog.txt
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Download release asset
+        id: asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "${{ steps.tag.outputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --pattern "*.zip" \
+            --dir ./dist
+          echo "path=$(ls ./dist/*.zip | head -1)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload to Nexus Mods
+        id: nexus_upload
+        continue-on-error: true
+        uses: Nexus-Mods/upload-action@v1.0.0-beta.11
+        with:
+          api_key: ${{ secrets.NEXUS_API_KEY }}
+          file_id: ${{ steps.meta.outputs.file_id }}
+          filename: ${{ steps.asset.outputs.path }}
+          display_name: Raiders of Blackveil Vortex Extension
+          version: ${{ steps.tag.outputs.version }}
+          category: main
+          archive_existing_version: true
+          update_mod_version: true
+          mod_id: ${{ steps.meta.outputs.mod_uid }}
+          changelog: ${{ steps.changelog.outputs.text }}
+
+      # Nexus beta API returns intermittent 500s — retry once.
+      - name: Wait before retry
+        if: steps.nexus_upload.outcome == 'failure'
+        run: sleep 30
+
+      - name: Upload to Nexus Mods (retry)
+        if: steps.nexus_upload.outcome == 'failure'
+        uses: Nexus-Mods/upload-action@v1.0.0-beta.11
+        with:
+          api_key: ${{ secrets.NEXUS_API_KEY }}
+          file_id: ${{ steps.meta.outputs.file_id }}
+          filename: ${{ steps.asset.outputs.path }}
+          display_name: Raiders of Blackveil Vortex Extension
+          version: ${{ steps.tag.outputs.version }}
+          category: main
+          archive_existing_version: true
+          update_mod_version: true
+          mod_id: ${{ steps.meta.outputs.mod_uid }}
+          changelog: ${{ steps.changelog.outputs.text }}

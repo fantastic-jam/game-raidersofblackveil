@@ -3,6 +3,10 @@
   "version": "0.5.0",
   "private": true,
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "release": "node tools/release.mjs"
+  },
+  "fchange": {
+    "commitFormat": "{type}: {message}"
   }
 }

@@ -1,0 +1,26 @@
+name: Update Nexus description
+
+# Pushes the extension's Nexus page description (nexus-description.txt) and summary
+# (metadata.json .nexus_short_description) as soon as they change on main.
+# This is the only place they are updated — nexus-publish.yml uploads the file only.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'nexus-description.txt'
+      - 'metadata.json'
+  workflow_dispatch:
+
+env:
+  NEXUS_API: https://api.nexusmods.com/v3
+
+jobs:
+  update-description:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update Nexus page
+        env:
+          NEXUS_API_KEY: ${{ secrets.NEXUS_API_KEY }}
+        run: bash .github/scripts/nexus-update-description.sh "$GITHUB_WORKSPACE"

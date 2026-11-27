@@ -1,0 +1,38 @@
+[size=4][b]Description[/b][/size]
+
+Adds Vortex support for [b]Raiders of Blackveil[/b].
+
+[b]Since version 0.5.0, the extension installs BepInEx IL2CPP.[/b] The game switched to IL2CPP in version 0.6.5, so BepInEx 5 and mods made for the old game can no longer load. The extension now installs the [url=https://www.nexusmods.com/raidersofblackveil/mods/19]BepInEx IL2CPP pack for Raiders of Blackveil[/url] instead, and replaces BepInEx 5 if you had it.
+
+[line]
+[size=4][b]Installation instructions[/b][/size]
+
+[list]
+[*]Install this extension in Vortex.[/*]
+[*]Click [b]Games[/b] in the navigation menu.[/*]
+[*]Search for [b]Raiders of Blackveil[/b].[/*]
+[*]Click [b]Manage[/b]. Vortex downloads and installs BepInEx automatically.[/*]
+[*]Launch the game once. The first launch takes one to two minutes longer than usual: BepInEx prepares the files mods need. Let it finish.[/*]
+[/list]
+
+[line]
+[size=4][b]Main features[/b][/size]
+
+[list]
+[*]Detects the Steam version of the game.[/*]
+[*]Installs the [url=https://www.nexusmods.com/raidersofblackveil/mods/19]BepInEx IL2CPP pack[/url] automatically, and updates it when a new version is published.[/*]
+[*]Supports standard [b]BepInEx plugin mods[/b]: a zip with a BepInEx/plugins/ structure, or just a DLL.[/*]
+[/list]
+
+[line]
+[size=4][b]Requirements[/b][/size]
+
+[list]
+[*]Vortex[/*]
+[*]A Nexus Mods account logged in to Vortex, to download BepInEx[/*]
+[/list]
+
+[line]
+[size=4][b]Source[/b][/size]
+
+[url=https://github.com/fantastic-jam/game-raidersofblackveil]GitHub[/url]
