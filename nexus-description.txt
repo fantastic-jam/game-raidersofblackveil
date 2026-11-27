@@ -15,6 +15,8 @@ Adds Vortex support for [b]Raiders of Blackveil[/b].
 [*]Launch the game once. The first launch takes one to two minutes longer than usual: BepInEx prepares the files mods need. Let it finish.[/*]
 [/list]
 
+[b]If Vortex doesn't install BepInEx[/b]: Nexus reviews every new version of the BepInEx pack before it can be downloaded, and Vortex can only install it once it's available. In the meantime, download [b]BepInEx-IL2CPP-RoB.zip[/b] from the latest [i]BepInEx IL2CPP[/i] release on [url=https://github.com/fantastic-jam/raiders-of-blackveil-mods/releases?q=bepinex]GitHub[/url] and drag it into Vortex.
+
 [line]
 [size=4][b]Main features[/b][/size]
 
