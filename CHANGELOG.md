@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0]
+
+### Changed
+- The game switched to IL2CPP (0.6.5, Unity 6000.5): the extension now installs the patched
+  [BepInEx IL2CPP pack](https://www.nexusmods.com/raidersofblackveil/mods/19) instead of BepInEx 5 (Mono),
+  which can no longer load mods
+- The newest main file of the pack is picked up automatically — Vortex updates BepInEx when a new pack is
+  published, without a new extension release
+
 ## [0.4.0]
 
 ### Fixed

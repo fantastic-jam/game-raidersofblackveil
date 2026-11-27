@@ -1,6 +1,6 @@
 # Raiders of Blackveil — Vortex Extension
 
-Adds support for **Raiders of Blackveil** (Steam App ID: `3352240`) to the [Vortex mod manager](https://www.nexusmods.com/about/vortex/). Handles game detection, auto-installs BepInEx, and deploys mods to the correct folder.
+Adds support for **Raiders of Blackveil** (Steam App ID: `3352240`) to the [Vortex mod manager](https://www.nexusmods.com/about/vortex/). Handles game detection, auto-installs BepInEx 6 (IL2CPP), and deploys mods to the correct folder.
 
 ## Requirements
 
@@ -16,9 +16,10 @@ Adds support for **Raiders of Blackveil** (Steam App ID: `3352240`) to the [Vort
 ## What This Extension Does
 
 - Auto-detects the game via Steam
-- Auto-installs BepInEx 5 (Unity Mono x64) from GitHub if not already present
+- Auto-installs the [BepInEx IL2CPP pack for Raiders of Blackveil](https://www.nexusmods.com/raidersofblackveil/mods/19) from Nexus Mods (stock BepInEx 6 does not run on the game yet) and keeps it up to date
+- The first launch after installing BepInEx takes a minute or two longer: BepInEx generates its interop assemblies
 - Deploys mods to `<game root>/BepInEx/plugins/`
-- Uses Vortex's built-in `modtype-bepinex` mod type — no custom installer needed
+- Uses Vortex's built-in `modtype-bepinex` mod type, plus an installer that normalises common mod zip layouts
 
 ## Troubleshooting
 
